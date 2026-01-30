@@ -32,15 +32,12 @@ def main():
             day = int(row[0])
             month = int(row[2])
             year = int(row[3])
-            # High tides are at columns 4, 6, 8, 10 (0-based)
-            for i in [4, 8]:
-                try:
-                    time_str = row[i]
-                    height_str = row[i+1]
-                except IndexError:
-                    continue
+            # Loop through all time/height pairs in the row
+            # Time/height pairs start at column 4 (0-based), then every 2 columns
+            for i in range(4, len(row)-1, 2):
+                time_str = row[i]
+                height_str = row[i+1]
                 if time_str and height_str:
-                    # High tide if height > 2 (adjust as needed)
                     try:
                         height = float(height_str)
                     except ValueError:
