@@ -16,7 +16,7 @@ DTSTART;TZID=Pacific/Auckland:{dtstart}
 DTEND;TZID=Pacific/Auckland:{dtend}
 SUMMARY:{summary}
 END:VEVENT
-"""
+""".strip()
 
 
 def main():
@@ -60,7 +60,7 @@ def main():
         ics.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
         ics.write(f"X-WR-CALNAME:High Tide {title}\n")
         for event in events:
-            ics.write(event)
+            ics.write(event+"\n")
         ics.write("END:VCALENDAR\n")
 
 if __name__ == '__main__':
