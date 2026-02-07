@@ -50,7 +50,7 @@ def main():
                         continue
                     if height > 2:
                         dt = datetime(year, month, day, int(time_str[:2]), int(time_str[3:5]))
-                        summary = f"High Tide: {height}m"
+                        summary = f"High Tide: {time_str} {height}m"
                         events.append(create_ics_event(dt, summary))
 
     with open(ics_file, 'w', encoding='utf-8') as icsfile:
