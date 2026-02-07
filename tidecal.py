@@ -1,11 +1,9 @@
 import csv
 from datetime import datetime, timedelta
+import sys
 
-
-# Input and output file paths
+# This script reads a CSV tide table and generates an ICS calendar file with high tide events.
 # https://static.charts.linz.govt.nz/tide-tables/maj-ports/csv/Auckland%202026.csv
-CSV_FILE = 'data/2026.csv'
-ICS_FILE = 'tides.ics'
 
 
 # Helper to create an ICS event
@@ -20,9 +18,17 @@ SUMMARY:{summary}
 END:VEVENT
 """
 
+
 def main():
+    # Get CSV file from command line argument or use default
+    if len(sys.argv) > 2:
+        csv_file = sys.argv[1]
+        ics_file = sys.argv[2]
+    else:
+        print("Usage: python tidecal.py <tide_csv_file> <output_ics_file>")
+        sys.exit(1)
     events = []
-    with open(CSV_FILE, newline='', encoding='utf-8') as csvfile:
+    with open(csv_file, newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             # Skip header/metadata lines
@@ -46,8 +52,8 @@ def main():
                         dt = datetime(year, month, day, int(time_str[:2]), int(time_str[3:5]))
                         summary = f"High Tide: {height}m"
                         events.append(create_ics_event(dt, summary))
-    # Write ICS file
-    with open(ICS_FILE, 'w', encoding='utf-8') as icsfile:
+
+    with open(ics_file, 'w', encoding='utf-8') as icsfile:
         icsfile.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
         for event in events:
             icsfile.write(event)
