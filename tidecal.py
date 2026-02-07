@@ -27,10 +27,13 @@ def main():
     else:
         print("Usage: python tidecal.py <tide_csv_file> <output_ics_file>")
         sys.exit(1)
+    title = None
     events = []
     with open(csv_file, newline='', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
+            if not title and row:
+                title = row[1].strip()
             # Skip header/metadata lines
             if not row or not row[0].strip().isdigit():
                 continue
@@ -53,11 +56,12 @@ def main():
                         summary = f"High Tide: {time_str} {height}m"
                         events.append(create_ics_event(dt, summary))
 
-    with open(ics_file, 'w', encoding='utf-8') as icsfile:
-        icsfile.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
+    with open(ics_file, 'w', encoding='utf-8') as ics:
+        ics.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
+        ics.write(f"X-WR-CALNAME:High Tide {title}\n")
         for event in events:
-            icsfile.write(event)
-        icsfile.write("END:VCALENDAR\n")
+            ics.write(event)
+        ics.write("END:VCALENDAR\n")
 
 if __name__ == '__main__':
     main()
