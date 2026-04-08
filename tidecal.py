@@ -10,13 +10,13 @@ import sys
 def create_ics_event(dt, summary):
     dtstart = (dt - timedelta(hours=1)).strftime('%Y%m%dT%H%M%S')
     dtend = (dt + timedelta(hours=1)).strftime('%Y%m%dT%H%M%S')
-    return f"""
-BEGIN:VEVENT
-DTSTART;TZID=Pacific/Auckland:{dtstart}
-DTEND;TZID=Pacific/Auckland:{dtend}
-SUMMARY:{summary}
-END:VEVENT
-""".strip()
+    return "".join(x+"\n" for x in [
+        "BEGIN:VEVENT",
+        f"DTSTART;TZID=Pacific/Auckland:{dtstart}",
+        f"DTEND;TZID=Pacific/Auckland:{dtend}",
+        f"SUMMARY:{summary}",
+        "END:VEVENT"
+    ])
 
 
 def main():
@@ -60,7 +60,7 @@ def main():
         ics.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
         ics.write(f"X-WR-CALNAME:High Tide {title}\n")
         for event in events:
-            ics.write(event+"\n")
+            ics.write(event)
         ics.write("END:VCALENDAR\n")
 
 if __name__ == '__main__':
