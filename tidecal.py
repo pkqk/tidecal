@@ -7,11 +7,12 @@ import sys
 
 
 # Helper to create an ICS event
-def create_ics_event(dt, summary):
+def create_ics_event(dt, dtstamp, summary):
     dtstart = (dt - timedelta(hours=1)).strftime('%Y%m%dT%H%M%S')
     dtend = (dt + timedelta(hours=1)).strftime('%Y%m%dT%H%M%S')
     return "".join(x+"\n" for x in [
         "BEGIN:VEVENT",
+        f"DTSTAMP:{dtstamp.strftime('%Y%m%dT%H%M%S')}",
         f"DTSTART;TZID=Pacific/Auckland:{dtstart}",
         f"DTEND;TZID=Pacific/Auckland:{dtend}",
         f"SUMMARY:{summary}",
@@ -20,6 +21,7 @@ def create_ics_event(dt, summary):
 
 
 def main():
+    dtstamp = datetime.now()
     # Get CSV file from command line argument or use default
     if len(sys.argv) > 2:
         csv_file = sys.argv[1]
@@ -54,10 +56,11 @@ def main():
                     if height > 2:
                         dt = datetime(year, month, day, int(time_str[:2]), int(time_str[3:5]))
                         summary = f"High Tide: {time_str} {height}m"
-                        events.append(create_ics_event(dt, summary))
+                        events.append(create_ics_event(dt, dtstamp, summary))
 
     with open(ics_file, 'w', encoding='utf-8') as ics:
         ics.write("BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n")
+        ics.write(f"PRODID:-//pkqk.net//tides {title}//EN\n")
         ics.write(f"X-WR-CALNAME:High Tide {title}\n")
         for event in events:
             ics.write(event)
